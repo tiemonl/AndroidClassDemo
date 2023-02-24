@@ -15,7 +15,7 @@
 
         <ImageView
             android:id="@+id/character_image"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_max="120dp"
             app:layout_constraintHeight_max="120dp"
@@ -31,10 +31,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textSize="24sp"
+            app:layout_constraintWidth_percent=".5"
+            app:layout_constraintWidth_default="percent"
             app:layout_constraintStart_toEndOf="@id/character_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/character_age"
-            tools:text="Rick"/>
+            android:text="@string/name"/>
         <TextView
             android:id="@+id/character_age"
             android:layout_width="wrap_content"

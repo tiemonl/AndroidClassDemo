@@ -4,19 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.kroger.classdemoapp.R
+import com.kroger.classdemoapp.databinding.FragmentCharacterDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CharacterDetailFragment : Fragment() {
+
+    private var _binding: FragmentCharacterDetailBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_character_detail, container, false)
+        _binding = FragmentCharacterDetailBinding.inflate(inflater, container, false)
 
         if (arguments != null) {
             val name = requireArguments().getString("name")
@@ -24,9 +27,9 @@ class CharacterDetailFragment : Fragment() {
             val image = requireArguments().getString("image")
             val universe = requireArguments().getString("universe")
 
-            view.findViewById<TextView>(R.id.character_universe).text = universe
+            binding.characterUniverse.text = universe
         }
 
-        return view
+        return binding.root
     }
 }

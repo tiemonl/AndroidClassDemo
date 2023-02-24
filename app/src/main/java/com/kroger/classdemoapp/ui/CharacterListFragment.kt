@@ -4,26 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.kroger.classdemoapp.Character
-import com.kroger.classdemoapp.CharacterAdapter
+import com.kroger.classdemoapp.model.Character
+import com.kroger.classdemoapp.ui.adapter.CharacterAdapter
 import com.kroger.classdemoapp.R
+import com.kroger.classdemoapp.databinding.FragmentCharacterListBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class CharacterListFragment : Fragment() {
+
+    private var _binding: FragmentCharacterListBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_character_list, container, false)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.character_recycler_view)
+        _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.characterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val characters = mutableListOf<Character>()
 
@@ -32,7 +37,7 @@ class CharacterListFragment : Fragment() {
             "Earth",
             "Citadel of Ricks",
             "Interdimensional Cable",
-            "Random Dimension"
+            "Random Dimension",
         )
         val nameMods = mutableListOf("Pickle", "", "Smart", "Fused", "Big Arm")
         val characterNames = mutableListOf("Rick", "Morty", "Summer", "Jerry", "Beth")
@@ -43,22 +48,45 @@ class CharacterListFragment : Fragment() {
                     "${nameMods.random()} ${characterNames.random()}".trimStart(),
                     characterLocations.random(),
                     genders.random(),
-                    i
-                )
+                    i,
+                ),
             )
         }
 
-        val adapter = CharacterAdapter(characters)
-        recyclerView.adapter = adapter
+        val adapter = CharacterAdapter(characters) { position ->
+            val character = characters[position]
 
-        return view
+            val bundle = bundleOf(
+                "name" to character.name,
+                "age" to character.age,
+                "image" to character.image,
+                "universe" to character.universe
+            )
+
+            val detailFragment = CharacterDetailFragment()
+            detailFragment.arguments = bundle
+
+            requireActivity().supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace(R.id.fragment_container_view, detailFragment)
+                addToBackStack(null)
+            }
+        }
+        binding.characterRecyclerView.adapter = adapter
+
+        return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun createCharacter(
         name: String,
         location: String,
         gender: String,
-        id: Int
+        id: Int,
     ) = Character(
         name = name,
         age = Random.nextInt(10, 99),
@@ -66,6 +94,6 @@ class CharacterListFragment : Fragment() {
         gender = gender,
         universe = location,
         id = id,
-        relation = listOf()
+        relation = listOf(),
     )
 }

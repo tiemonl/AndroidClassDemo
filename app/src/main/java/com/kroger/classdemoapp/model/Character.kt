@@ -1,4 +1,4 @@
-package com.kroger.classdemoapp
+package com.kroger.classdemoapp.model
 
 data class Character(
     val name: String,
